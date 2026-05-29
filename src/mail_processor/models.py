@@ -15,3 +15,11 @@ class EmailMessage:
 
     detected_format: str = "unknown"
     metadata: dict[str, str] = field(default_factory=dict)
+
+
+@dataclass
+class ClassificationResult:
+    category: str = "unknown"
+    confidence: float = 0.0
+    matched_rules: list[str] = field(default_factory=list)
+    explanation: str = ""
