@@ -46,4 +46,21 @@ class FileHandler:
             "created_at": file_path.stat().st_ctime,
             "modified": file_path.stat().st_mtime
         }
+    
+    def move_file_to_category(self, file_path: Path, category: str) -> Path:
+        target_dir = PROCESSED_DIR / category
+        target_path = target_dir / file_path.name
         
+        try:
+            file_path.rename(target_path)
+            return target_path
+        except Exception as e:
+            raise Exception(f"Failed to move file {file_path} to {target_path}: {str(e)}")
+    
+    def handle_unknown_file(self, file_path: Path) -> bool:
+        return self.move_file_to_category(file_path, "unknown")
+    
+    def handle_corrupted_file(self, file_path: Path) -> bool:
+        return self.move_file_to_category(file_path, "corrupted")
+    
+    
