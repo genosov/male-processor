@@ -11,6 +11,7 @@ from src.mail_processor.models import EmailMessage
         ("Discount", "Buy now", "spam"),
         ("Help", "Can't login", "support"),
         ("Party", "My birthday tonight", "unknown"),
+        ("", "", "unknown"),
     ],
 )
 def test_classifier_detects_email_category(subject, body, expected_category):
