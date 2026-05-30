@@ -15,7 +15,7 @@ class EmailClassifier:
                 "update",
                 "announcement",
                 "reminder",
-                ],
+            ],
         }
 
     def classify(self, email: EmailMessage) -> ClassificationResult:
