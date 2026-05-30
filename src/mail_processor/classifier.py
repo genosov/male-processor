@@ -24,10 +24,11 @@ class EmailClassifier:
         selected_category = "unknown"
 
         for category, keywords in self.rules.items():
-            if any(keyword in text for keyword in keywords):
-                matched_rules.append(f"{category}_keywords")
-                if selected_category == "unknown":
-                    selected_category = category
+            for keyword in keywords:
+                if keyword in text:
+                    matched_rules.append(f"{category}: {keyword}")
+                    if selected_category == "unknown":
+                        selected_category = category
 
         return ClassificationResult(selected_category, matched_rules)
 
