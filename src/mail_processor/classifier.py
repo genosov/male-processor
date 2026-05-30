@@ -4,7 +4,9 @@ from .models import EmailMessage, ClassificationResult
 class EmailClassifier:
     def __init__(self):
         self.rules = {
-            "critical": ["urgent", "critical", "server down"]
+            "critical": ["urgent", "critical", "server down"],
+            "spam": ["discount", "winner", "buy now"],
+            "support": ["help", "support", "problem", "issue", "can't login"],
         }
 
     def classify(self, email: EmailMessage) -> ClassificationResult:
