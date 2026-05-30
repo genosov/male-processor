@@ -7,7 +7,7 @@ from src.mail_processor.models import EmailMessage
 @pytest.mark.parametrize(
     "subject, body, expected_category, expected_matched_rules",
     [
-        ("Urgent problem", "Server down", "critical", ["critical_keywords"]),
+        ("Urgent incident", "Server down", "critical", ["critical_keywords"]),
         ("Discount", "Buy now", "spam", ["spam_keywords"]),
         ("Help", "Can't login", "support", ["support_keywords"]),
         ("Party", "My birthday tonight", "unknown", []),
@@ -30,14 +30,14 @@ def test_classifier_detects_email_category_and_rules(subject, body, expected_cat
 
 
 @pytest.mark.parametrize(
-    "subject, body, expected_category",
+    "subject, body, expected_category, expected_matched_rules",
     [
-        ("Urgent discount", "Server down, buy now", "critical"),
-        ("Critical help", "Can't login", "critical"),
-        ("Discount help", "Can't login, buy now", "spam"),
+        ("Urgent discount", "Server down, buy now", "critical", ["critical_keywords", "spam_keywords"]),
+        ("Critical help", "Can't login", "critical", ["critical_keywords", "support_keywords"]),
+        ("Discount help", "Can't login, buy now", "spam", ["spam_keywords", "support_keywords"]),
     ],
 )
-def test_classifier_resolves_category_priority(subject, body, expected_category):
+def test_classifier_resolves_category_priority(subject, body, expected_category, expected_matched_rules):
     email = EmailMessage(
         filename="test.txt",
         source_path="test.txt",
@@ -47,3 +47,4 @@ def test_classifier_resolves_category_priority(subject, body, expected_category)
     classifier = EmailClassifier()
     result = classifier.classify(email)
     assert result.category == expected_category
+    assert result.matched_rules == expected_matched_rules

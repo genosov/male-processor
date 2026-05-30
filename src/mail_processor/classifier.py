@@ -20,10 +20,16 @@ class EmailClassifier:
 
     def classify(self, email: EmailMessage) -> ClassificationResult:
         text = self._build_text(email)
+        matched_rules = []
+        selected_category = "unknown"
+
         for category, keywords in self.rules.items():
             if any(keyword in text for keyword in keywords):
-                return ClassificationResult(category, [f"{category}_keywords"])
-        return ClassificationResult("unknown", [])
+                matched_rules.append(f"{category}_keywords")
+                if selected_category == "unknown":
+                    selected_category = category
+
+        return ClassificationResult(selected_category, matched_rules)
 
     def _build_text(self, email: EmailMessage) -> str:
         text = (email.subject + " " + email.body).lower().strip()
