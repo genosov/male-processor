@@ -7,6 +7,15 @@ class EmailClassifier:
             "critical": ["urgent", "critical", "server down"],
             "spam": ["discount", "winner", "buy now"],
             "support": ["help", "support", "problem", "issue", "can't login"],
+            "business": ["contract", "invoice", "meeting", "client", "payment"],
+            "info": [
+                "notification",
+                "newsletter",
+                "report",
+                "update",
+                "announcement",
+                "reminder",
+                ],
         }
 
     def classify(self, email: EmailMessage) -> ClassificationResult:
@@ -17,6 +26,6 @@ class EmailClassifier:
         return ClassificationResult("unknown", [])
 
     def _build_text(self, email: EmailMessage) -> str:
-        text = (email.subject + " " + email.body).lower()
+        text = (email.subject + " " + email.body).lower().strip()
         return text
 
