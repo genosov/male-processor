@@ -22,7 +22,7 @@ class EmailClassifier:
     def classify(self, email: EmailMessage) -> ClassificationResult:
         text = self._build_text(email)
         matched_rules = []
-        category_scores = {"critical": 0, "spam": 0, "support": 0, "business": 0, "info": 0}
+        category_scores = {category: 0 for category in self.rules}
         selected_category = "unknown"
 
         for category, keywords in self.rules.items():
