@@ -24,6 +24,18 @@ from src.mail_processor.models import EmailMessage
             ["business: invoice", "business: client", "business: payment"],
         ),
         ("Newsletter", "Product update", "info", ["info: newsletter", "info: update"]),
+        (
+            "URGENT INCIDENT",
+            "SERVER DOWN",
+            "critical",
+            ["critical: urgent", "critical: server down"],
+        ),
+        (
+            "   Discount   ",
+            "   Buy now   ",
+            "spam",
+            ["spam: discount", "spam: buy now"],
+        ),
     ],
 )
 def test_classifier_detects_email_category_and_rules(subject, body, expected_category, expected_matched_rules):
