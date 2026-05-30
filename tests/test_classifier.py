@@ -82,7 +82,7 @@ def test_classifier_detects_email_category_and_rules(subject, body, expected_cat
         (
             "Discount help",
             "Can't login, buy now",
-            "spam",
+            "support",
             [
                 "spam: discount",
                 "spam: buy now",

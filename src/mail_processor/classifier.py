@@ -17,7 +17,7 @@ class EmailClassifier:
                 "reminder",
             ],
         }
-        self.priority = ["critical", "spam", "support", "business", "info"]
+        self.priority = ["critical", "support", "spam", "business", "info"]
 
     def classify(self, email: EmailMessage) -> ClassificationResult:
         text = self._build_text(email)
