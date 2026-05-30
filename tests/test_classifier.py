@@ -23,3 +23,23 @@ def test_classifier_detects_email_category(subject, body, expected_category):
     classifier = EmailClassifier()
     result = classifier.classify(email)
     assert result.category == expected_category
+
+
+@pytest.mark.parametrize(
+    "subject, body, expected_category",
+    [
+        ("Urgent discount", "Server down, buy now", "critical"),
+        ("Critical help", "Can't login", "critical"),
+        ("Discount help", "Can't login, buy now", "spam"),
+    ],
+)
+def test_classifier_resolves_category_priority(subject, body, expected_category):
+    email = EmailMessage(
+        filename="test.txt",
+        source_path="test.txt",
+        subject=subject,
+        body=body,
+    )
+    classifier = EmailClassifier()
+    result = classifier.classify(email)
+    assert result.category == expected_category
