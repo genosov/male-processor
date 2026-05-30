@@ -1,7 +1,18 @@
 import pytest
 
 from src.mail_processor.classifier import EmailClassifier
-from src.mail_processor.models import EmailMessage
+from src.mail_processor.models import EmailMessage, ClassificationResult
+
+
+def classify_email(subject: str, body: str) -> ClassificationResult:
+    email = EmailMessage(
+        filename="test.txt",
+        source_path="test.txt",
+        subject=subject,
+        body=body,
+    )
+    classifier = EmailClassifier()
+    return classifier.classify(email)
 
 
 @pytest.mark.parametrize(
@@ -39,14 +50,7 @@ from src.mail_processor.models import EmailMessage
     ],
 )
 def test_classifier_detects_email_category_and_rules(subject, body, expected_category, expected_matched_rules):
-    email = EmailMessage(
-        filename="test.txt",
-        source_path="test.txt",
-        subject=subject,
-        body=body,
-    )
-    classifier = EmailClassifier()
-    result = classifier.classify(email)
+    result = classify_email(subject, body)
     assert result.category == expected_category
     assert result.matched_rules == expected_matched_rules
 
@@ -89,13 +93,6 @@ def test_classifier_detects_email_category_and_rules(subject, body, expected_cat
     ],
 )
 def test_classifier_resolves_category_priority(subject, body, expected_category, expected_matched_rules):
-    email = EmailMessage(
-        filename="test.txt",
-        source_path="test.txt",
-        subject=subject,
-        body=body,
-    )
-    classifier = EmailClassifier()
-    result = classifier.classify(email)
+    result = classify_email(subject, body)
     assert result.category == expected_category
     assert result.matched_rules == expected_matched_rules
