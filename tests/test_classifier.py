@@ -96,3 +96,25 @@ def test_classifier_resolves_category_priority(subject, body, expected_category,
     result = classify_email(subject, body)
     assert result.category == expected_category
     assert result.matched_rules == expected_matched_rules
+
+
+@pytest.mark.parametrize(
+    "subject, body, expected_category, expected_matched_rules",
+    [
+        (
+            "Buy now",
+            "Client payment invoice",
+            "business",
+            [
+                "spam: buy now",
+                "business: invoice",
+                "business: client",
+                "business: payment",
+            ],
+        ),
+    ],
+)
+def test_classifier_prefers_higher_score_when_not_critical(subject, body, expected_category, expected_matched_rules):
+    result = classify_email(subject, body)
+    assert result.category == expected_category
+    assert result.matched_rules == expected_matched_rules
