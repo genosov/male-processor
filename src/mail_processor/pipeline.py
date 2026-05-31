@@ -1,6 +1,6 @@
 import logging
 
-from .models import CATEGORIES, ProcessingStats
+from .models import CATEGORIES
 from .classifier import EmailClassifier
 from .file_handler import FileHandler
 from .models import ProcessingStats
@@ -33,7 +33,7 @@ class ProcessingPipeline:
             return file_format != "unknown"
 
 
-    def run(selfself) -> ProcessingStats:
+    def run(self) -> ProcessingStats:
         logger.info("Pipeline started")
 
         files = self.file_handler.scan_inbox()
