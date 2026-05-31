@@ -14,7 +14,7 @@ class EmailParser:
         cur_name = cur_source_path.name 
         cur_sender =  "unknown_sender"
         cur_subject = ""
-        cur_raw_content = cur_source_path.read_text(encoding="utf-8")
+        cur_raw_content = cur_source_path.read_text(encoding= DEFAULT_ENCODING)
         cur_body = cur_raw_content
         lines = cur_raw_content.splitlines()
         from_who_variants = ["From:", "От кого:", "ot kogo:", "от кого:"]

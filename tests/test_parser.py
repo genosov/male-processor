@@ -2,7 +2,7 @@ import sys
 from pathlib import Path
 import pytest
 sys.path.append(str(Path(__file__).resolve().parents[1] / "src" / "mail_processor"))
-from parser import EmailParser
+from src.mail_processor.parser import EmailParser
 
 
 def test_parse_normal_email(tmp_path):

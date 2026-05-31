@@ -29,7 +29,7 @@ class ProcessingPipeline:
         self.stats.categories_count[category] += 1
 
 
-    def run(selfself) -> ProcessingStats:
+    def run(self) -> ProcessingStats:
         logger.info("Pipeline started")
 
         files = self.file_handler.scan_inbox()
