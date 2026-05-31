@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 class FileHandler:
     def __init__(self):
         self.categories = CATEGORIES
-        self.initialize_directories()
+        self._initialize_directories()
 
     def _initialize_directories(self):
         directories = [INBOX_DIR, PROCESSED_DIR, LOGS_DIR]
@@ -56,7 +56,7 @@ class FileHandler:
     
     def move_file_to_category(self, file_path: Path, category: str) -> Path | None:
         target_dir = PROCESSED_DIR / category
-        destination_path = self.generate_unique_filename(target_dir, file_path.name)
+        destination_path = self._generate_unique_filename(target_dir, file_path.name)
         if not target_dir.exists():
             logger.exception(f"Target directory {target_dir} does not exist for category {category}")
             return None
