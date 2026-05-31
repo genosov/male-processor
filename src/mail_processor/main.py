@@ -1,5 +1,7 @@
 import logging
 
+from extensions.analytics_report.report_generator import generate_excel_report
+
 from .logging_config import setup_logging
 from .pipeline import ProcessingPipeline
 
@@ -27,6 +29,13 @@ def main() -> int:
         stats = pipeline.run()
 
         print_stats(stats)
+
+        try:
+            report_path = generate_excel_report(stats)
+            print(f"Excel report created: {report_path}")
+        except Exception:
+            logger.exception("Failed to generate Excel report")
+
         logger.info("Application finished successfully")
         return 0
     except Exception:
