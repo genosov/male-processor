@@ -1,6 +1,7 @@
 import logging
 
-from .models import CATEGORIES, ProcessingStats
+from .config import SUPPORTED_EXTENSIONS
+from .models import CATEGORIES
 from .classifier import EmailClassifier
 from .file_handler import FileHandler
 from .models import ProcessingStats
@@ -52,10 +53,29 @@ class ProcessingPipeline:
 
         return self.stats
 
+    def _is_supported_file(self, file_path) -> bool:
+        return file_path.suffix.lower() in SUPPORTED_EXTENSIONS
+    
     def process_file(self, file_path) -> None:
         logger.info("Processing file: %s", file_path)
 
         try:
+            if not self._is_supported_file(file_path):
+                logger.warning("Unsupported file format: %s", file_path)
+
+                destination_path = self.file_handler.move_file_to_category(
+                    file_path,
+                    "corrupted",
+                )
+
+                if destination_path is None:
+                    logger.error("Failed to move unsupported file: %s", file_path)
+                    self._update_stats("corrupted", success=False)
+                    return
+
+                self._update_stats("corrupted", success=False)
+                return
+
             email = self.parser.parse(file_path)
             classification = self.classifier.classify(email)
             category = classification.category

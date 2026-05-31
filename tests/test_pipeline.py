@@ -13,6 +13,11 @@ class FakeFileHandler:
     def scan_inbox(self):
         return self.files
 
+    def classify_file(self, file_path):
+        if Path(file_path).suffix == ".txt":
+            return ".txt"
+        return "unknown"
+
     def move_file_to_category(self, file_path, category):
         self.moved_files.append((file_path, category))
         if self.move_result is not None:
@@ -130,6 +135,19 @@ def test_process_file_moves_corrupted_when_parser_fails():
     file_handler = FakeFileHandler()
     parser = FakeParser(error=ValueError("broken email"))
     pipeline = make_pipeline(file_handler=file_handler, parser=parser)
+
+    pipeline.process_file(file_path)
+
+    assert file_handler.moved_files == [(file_path, "corrupted")]
+    assert pipeline.stats.processed_files == 0
+    assert pipeline.stats.failed_files == 1
+    assert pipeline.stats.categories_count == {"corrupted": 1}
+
+
+def test_process_file_moves_unsupported_file_to_corrupted():
+    file_path = Path("/inbox/file.json")
+    file_handler = FakeFileHandler()
+    pipeline = make_pipeline(file_handler=file_handler)
 
     pipeline.process_file(file_path)
 
