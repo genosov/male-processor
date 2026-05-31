@@ -1,19 +1,30 @@
-import pytest 
+import pytest
+
+import src.mail_processor.config as config
+import src.mail_processor.file_handler as file_handler_module
 from src.mail_processor.file_handler import FileHandler
-from src.mail_processor.config import INBOX_DIR, PROCESSED_DIR, LOGS_DIR
+
+
+INBOX_DIR = config.INBOX_DIR
+PROCESSED_DIR = config.PROCESSED_DIR
+LOGS_DIR = config.LOGS_DIR
+
 
 @pytest.fixture(autouse=True)
-def fake_directories(tmp_path):
-    main_inbox = INBOX_DIR
-    main_processed = PROCESSED_DIR
-    main_logs = LOGS_DIR
+def fake_directories(tmp_path, monkeypatch):
+    global INBOX_DIR, PROCESSED_DIR, LOGS_DIR
+
     INBOX_DIR = tmp_path / "inbox"
     PROCESSED_DIR = tmp_path / "processed"
     LOGS_DIR = tmp_path / "logs"
-    yield
-    INBOX_DIR = main_inbox
-    PROCESSED_DIR = main_processed
-    LOGS_DIR = main_logs
+
+    monkeypatch.setattr(config, "INBOX_DIR", INBOX_DIR)
+    monkeypatch.setattr(config, "PROCESSED_DIR", PROCESSED_DIR)
+    monkeypatch.setattr(config, "LOGS_DIR", LOGS_DIR)
+
+    monkeypatch.setattr(file_handler_module, "INBOX_DIR", INBOX_DIR)
+    monkeypatch.setattr(file_handler_module, "PROCESSED_DIR", PROCESSED_DIR)
+    monkeypatch.setattr(file_handler_module, "LOGS_DIR", LOGS_DIR)
 
 def test_initialize_directories():
     filehandler = FileHandler()
@@ -73,7 +84,7 @@ def test_move_file_to_category():
     handler = FileHandler()
     file1 = INBOX_DIR / "file.txt"
     file1.touch()
-    category = handler.classify_file(file1)
+    category = "support"
     destination_path = handler.move_file_to_category(file1, category)
     assert destination_path is not None
     assert destination_path.exists()
@@ -83,7 +94,7 @@ def test_move_file_to_category_with_the_same_filename():
     handler = FileHandler()
     file1 = INBOX_DIR / "file.txt"
     file1.touch()
-    category = handler.classify_file(file1)
+    category = "support"
     destination_path1 = handler.move_file_to_category(file1, category)
     assert destination_path1 is not None
     assert destination_path1.exists()
