@@ -28,6 +28,10 @@ class ProcessingPipeline:
             self.stats.categories_count[category] = 0
         self.stats.categories_count[category] += 1
 
+        def _is_supported_file(self, file_path) -> bool:
+            file_format = self.file_handler.classify_file(file_path)
+            return file_format != "unknown"
+
 
     def run(selfself) -> ProcessingStats:
         logger.info("Pipeline started")
@@ -56,6 +60,22 @@ class ProcessingPipeline:
         logger.info("Processing file: %s", file_path)
 
         try:
+            if not self._is_supported_file(file_path):
+                logger.warning("Unsupported file format: %s", file_path)
+
+                destination_path = self.file_handler.move_file_to_category(
+                    file_path,
+                    "unknown",
+                )
+
+                if destination_path is None:
+                    logger.error("Failed to move unsupported file: %s", file_path)
+                    self._update_stats("unknown", success=False)
+                    return
+
+                self._update_stats("unknown", success=True)
+                return
+
             email = self.parser.parse(file_path)
             classification = self.classifier.classify(email)
             category = classification.category
