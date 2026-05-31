@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from pathlib import Path
-from models import EmailMessage
-from config import DEFAULT_ENCODING, SUPPORTED_EXTENSIONS
+from .models import EmailMessage
+from .config import DEFAULT_ENCODING, SUPPORTED_EXTENSIONS
 class EmailParser:
     def parse(self, filePath):
         cur_source_path = Path(filePath)
