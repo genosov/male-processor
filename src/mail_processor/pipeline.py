@@ -28,9 +28,7 @@ class ProcessingPipeline:
             self.stats.categories_count[category] = 0
         self.stats.categories_count[category] += 1
 
-        def _is_supported_file(self, file_path) -> bool:
-            file_format = self.file_handler.classify_file(file_path)
-            return file_format != "unknown"
+
 
 
     def run(self) -> ProcessingStats:
@@ -56,6 +54,10 @@ class ProcessingPipeline:
 
         return self.stats
 
+    def _is_supported_file(self, file_path) -> bool:
+        file_format = self.file_handler.classify_file(file_path)
+        return file_format != "unknown"
+    
     def process_file(self, file_path) -> None:
         logger.info("Processing file: %s", file_path)
 
