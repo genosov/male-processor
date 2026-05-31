@@ -1,10 +1,7 @@
-from config import (
-    ROOT_DIR, DATA_DIR, INBOX_DIR, PROCESSED_DIR, LOGS_DIR,
-    LOG_FILE, DEFAULT_ENCODING, SUPPORTED_EXTENSIONS
-)
+from config import INBOX_DIR, PROCESSED_DIR, LOGS_DIR, SUPPORTED_EXTENSIONS
 from models import CATEGORIES
 from pathlib import Path
-
+import shutil
 
 class FileHandler:
     def __init__(self):
@@ -24,11 +21,9 @@ class FileHandler:
     
     def scan_inbox(self) -> list[Path]:
         files = []
-        
         for file in INBOX_DIR.iterdir():
             if file.is_file() and file.suffix.lower() in SUPPORTED_EXTENSIONS:
                 files.append(file)
-
         return files
     
     def classify_file(self, file_path: Path) -> str:
@@ -47,20 +42,23 @@ class FileHandler:
             "modified": file_path.stat().st_mtime
         }
     
+    def generate_unique_filename(self, destination_dir: Path, filename: str) -> Path:
+        cur_path = destination_dir / filename
+        if not cur_path.exists():
+            return cur_path
+        cur_name = cur_path.stem
+        extension = cur_path.suffix
+        time_of_creation = int(cur_path.stat().st_ctime)
+        new_filename = f"{cur_name}_{time_of_creation}{extension}"
+        return destination_dir / new_filename
+    
     def move_file_to_category(self, file_path: Path, category: str) -> Path:
         target_dir = PROCESSED_DIR / category
-        target_path = target_dir / file_path.name
-        
+        destination_path = self.generate_unique_filename(target_dir, file_path.name)
         try:
-            file_path.rename(target_path)
-            return target_path
+            shutil.move(str(file_path), str(destination_path))
+            return destination_path
         except Exception as e:
-            raise Exception(f"Failed to move file {file_path} to {target_path}: {str(e)}")
-    
-    def handle_unknown_file(self, file_path: Path) -> bool:
-        return self.move_file_to_category(file_path, "unknown")
-    
-    def handle_corrupted_file(self, file_path: Path) -> bool:
-        return self.move_file_to_category(file_path, "corrupted")
-    
+            pass 
+
     
