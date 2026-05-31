@@ -29,8 +29,6 @@ class ProcessingPipeline:
         self.stats.categories_count[category] += 1
 
 
-
-
     def run(self) -> ProcessingStats:
         logger.info("Pipeline started")
 
