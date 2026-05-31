@@ -24,7 +24,7 @@ class FileHandler:
     def scan_inbox(self) -> list[Path]:
         files = []
         for file in INBOX_DIR.iterdir():
-            if file.is_file() and file.suffix.lower() in SUPPORTED_EXTENSIONS:
+            if file.is_file():
                 files.append(file)
         return files
     
