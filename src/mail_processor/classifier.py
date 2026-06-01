@@ -1,13 +1,115 @@
+import re
+
 from .models import EmailMessage, ClassificationResult
 
 
 class EmailClassifier:
     def __init__(self):
         self.rules = {
-            "critical": ["urgent", "critical", "server down"],
-            "spam": ["discount", "winner", "buy now"],
-            "support": ["help", "support", "problem", "issue", "can't login"],
-            "business": ["contract", "invoice", "meeting", "client", "payment"],
+            "critical": [
+                "urgent",
+                "critical",
+                "server down",
+                "критичный инцидент",
+                "критический инцидент",
+                "ошибка 500",
+                "работа остановлена",
+                "массовый сбой",
+                "падает",
+                "не работает",
+                "не отвечает",
+                "срочная помощь",
+                "просим срочно проверить",
+            ],
+            "spam": [
+                "discount",
+                "winner",
+                "buy now",
+                "выиграли",
+                "подтвердите личность",
+                "верификация аккаунта",
+                "логин и пароль",
+                "перейдите по ссылке",
+                "аккаунт будет заблокирован",
+                "немедленно подтвердите",
+                "срочно подтвердите",
+                "пароль истекает",
+                "ответив на это письмо",
+                "secure-login",
+                "exclusive offer",
+            ],
+            "support": [
+                "help",
+                "support",
+                "problem",
+                "issue",
+                "can't login",
+                "ошибка",
+                "ошибке",
+                "не открывает",
+                "не отвечает",
+                "не могу войти",
+                "нет доступа",
+                "недоступен",
+                "недоступна",
+                "запрос доступа",
+                "выдать доступ",
+                "нужны права",
+                "права администратора",
+                "пропал доступ",
+                "восстановить",
+                "доступ запрещён",
+                "не запускается",
+                "перестал запускаться",
+                "зависает",
+                "не включается",
+                "неисправность",
+                "сломался",
+                "ремонт",
+                "замена",
+                "оборудование",
+                "оборудования",
+                "не определяется системой",
+                "установка",
+                "переустановка",
+                "нужна помощь",
+                "тикет",
+                "заявка",
+                "заявке",
+                "ошибка при подключении",
+                "ошибке при подключении",
+            ],
+            "business": [
+                "contract",
+                "invoice",
+                "meeting",
+                "client",
+                "payment",
+                "клиент",
+                "клиента",
+                "партнёр",
+                "партнер",
+                "внешний пользователь",
+                "внешний партнёр",
+                "внешний партнер",
+                "счёт",
+                "счет",
+                "акт",
+                "акт выполненных работ",
+                "оплата",
+                "статус оплаты",
+                "договор",
+                "договору",
+                "приложение к договору",
+                "коммерческое предложение",
+                "закрывающие документы",
+                "бухгалтерию",
+                "реквизиты",
+                "техническое задание",
+                "согласование",
+                "демо",
+                "созвон",
+            ],
             "info": [
                 "notification",
                 "newsletter",
@@ -15,6 +117,22 @@ class EmailClassifier:
                 "update",
                 "announcement",
                 "reminder",
+                "корпоративный дайджест",
+                "дайджест",
+                "уведомление",
+                "отчёт",
+                "отчет",
+                "обновления корпоративного портала",
+                "напоминаем",
+                "плановые технические работы",
+                "мониторинг",
+                "healthcheck",
+                "disk usage",
+                "warning",
+                "alert",
+                "итоги квартала",
+                "новые сотрудники",
+                "изменения в политике",
             ],
         }
         self.priority = ["critical", "support", "spam", "business", "info"]
@@ -27,7 +145,7 @@ class EmailClassifier:
 
         for category, keywords in self.rules.items():
             for keyword in keywords:
-                if keyword in text:
+                if self._keyword_matches(text, keyword):
                     matched_rules.append(f"{category}: {keyword}")
                     category_scores[category] = category_scores.get(category, 0) + 1
 
@@ -47,3 +165,7 @@ class EmailClassifier:
     def _build_text(self, email: EmailMessage) -> str:
         text = (email.subject + " " + email.body).lower().strip()
         return text
+
+    def _keyword_matches(self, text: str, keyword: str) -> bool:
+        pattern = rf"(?<!\w){re.escape(keyword.lower())}(?!\w)"
+        return re.search(pattern, text) is not None
